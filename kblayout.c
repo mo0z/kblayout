@@ -15,7 +15,7 @@
 #include <X11/XKBlib.h>
 #include <X11/Xft/Xft.h>
 
-#define POSITION_X 1300
+#define POSITION_X 600
 #define POSITION_Y 0
 #define BG_COLOR "#222222"
 #define FG_COLOR "#bbbbbb"
@@ -50,9 +50,7 @@ int main(int argc __attribute__((unused)), char *argv[])
     XftFont *xftfont;
     Window win;
     XSetWindowAttributes xwa;
-    XEvent evnt;
     XftColor xftbgcolor, xftfgcolor;
-    XkbStateRec state;
     ssize_t pos_x, pos_y;
     ssize_t prevgroup = -1;
 
@@ -103,28 +101,27 @@ int main(int argc __attribute__((unused)), char *argv[])
 
     while (1)
     {
-        XkbDescPtr kb;
-        char *name;
-        XftDraw *xftdraw;
-        size_t i;
+        XkbStateRec state;
+        XEvent evnt;
 
         XkbGetState(dpy, XkbUseCoreKbd, &state);
         while (XPending(dpy))
         {
             XNextEvent(dpy, &evnt);
-            if ((state.group != prevgroup) ||
-                (evnt.type == Expose) ||
-                (evnt.type == VisibilityNotify))
+            if (state.group != prevgroup ||
+                evnt.type == Expose ||
+                evnt.type == VisibilityNotify)
             {
+                XkbDescPtr kb;
+                char *name;
+                XftDraw *xftdraw;
+                size_t i;
+
                 kb = XkbGetKeyboard(dpy, XkbAllComponentsMask, XkbUseCoreKbd);
                 name = XGetAtomName(dpy, kb->names->groups[state.group]);
 
-                i = LANG_OUTPUT_LENGTH;
-                do
-                {
-                    --i;
+                for (i = LANG_OUTPUT_LENGTH; i--;)
                     name[i] = (char)toupper(name[i]);
-                } while (i);
 
                 xftdraw = XftDrawCreate(dpy, win, vsl, cmap);
                 XClearWindow(dpy, win);
