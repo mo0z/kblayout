@@ -120,8 +120,12 @@ int main(int argc __attribute__((unused)), char *argv[])
                 kb = XkbGetKeyboard(dpy, XkbAllComponentsMask, XkbUseCoreKbd);
                 name = XGetAtomName(dpy, kb->names->groups[state.group]);
 
-                for (i = LANG_OUTPUT_LENGTH; i--;)
+                i = LANG_OUTPUT_LENGTH;
+                do
+                {
+                    --i;
                     name[i] = (char)toupper(name[i]);
+                } while (i);
 
                 xftdraw = XftDrawCreate(dpy, win, vsl, cmap);
                 XClearWindow(dpy, win);
