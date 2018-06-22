@@ -28,18 +28,6 @@
 
 static char *getprogname_of_argv(char *argv_zero_tzs);
 
-/* get current process name without path */
-char *getprogname_of_argv(char *argv_zero_tzs)
-{
-    char *p;
-    if (argv_zero_tzs == NULL)
-        return NULL;
-    for (p = argv_zero_tzs; *argv_zero_tzs; ++argv_zero_tzs)
-        if (*argv_zero_tzs == '/')
-            p = argv_zero_tzs + 1;
-    return p;
-}
-
 int main(int argc __attribute__((unused)), char *argv[])
 {
     Display *dpy;
@@ -147,4 +135,16 @@ int main(int argc __attribute__((unused)), char *argv[])
     XftColorFree(dpy, vsl, cmap, &xftfgcolor);
     XftColorFree(dpy, vsl, cmap, &xftbgcolor);
     XCloseDisplay(dpy);
+}
+
+/* get current process name without path */
+char *getprogname_of_argv(char *argv_zero_tzs)
+{
+    char *p;
+    if (argv_zero_tzs == NULL)
+        return NULL;
+    for (p = argv_zero_tzs; *argv_zero_tzs; ++argv_zero_tzs)
+        if (*argv_zero_tzs == '/')
+            p = argv_zero_tzs + 1;
+    return p;
 }
