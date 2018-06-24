@@ -87,7 +87,7 @@ int main(int argc __attribute__((unused)), char *argv[])
 
     XkbSelectEvents(dpy, XkbUseCoreKbd, XkbAllEventsMask, XkbAllEventsMask);
 
-    while (1)
+    for (;;)
     {
         XkbStateRec state;
         XEvent evnt;
