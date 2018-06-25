@@ -23,8 +23,8 @@
 #define LANG_OUTPUT_LENGTH 2
 #define WIDTH 30
 #define HEIGHT 17
-#define POS_X -1
-#define POS_Y -1
+#define POS_X -1 /* -1 on the center */
+#define POS_Y -1 /* -1 on the center */
 
 static char *getprogname_of_argv(char *argv_zero_tzs);
 
@@ -36,8 +36,8 @@ int main(int argc __attribute__((unused)), char *argv[])
     Visual *vsl;
     Colormap cmap;
     XftFont *xftfont;
-    Window win;
     XSetWindowAttributes xwa;
+    Window win;
     XftColor xftbgcolor, xftfgcolor;
     ssize_t pos_x, pos_y;
     ssize_t prevgroup = -1;
