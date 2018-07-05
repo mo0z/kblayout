@@ -1,11 +1,8 @@
 /*
- * kblayout.c
- * Simple keyboard layout indicator
- *
- * Andrey Shashanov (2018)
- *
- * Build:
- * gcc -Wall -pedantic -std=c99 -O3 -s -lX11 -lXft `pkg-config --cflags freetype2` kblayout.c -o kblayout
+Simple keyboard layout indicator
+Andrey Shashanov (2018)
+
+gcc -O3 -s -lX11 -lXft `pkg-config --cflags freetype2` -o kblayout kblayout.c
 */
 
 #include <stdio.h>
@@ -20,13 +17,13 @@
 #define BG_COLOR "#222222"
 #define FG_COLOR "#bbbbbb"
 #define FONT "monospace:size=10"
-#define LANG_OUTPUT_LENGTH 2
-#define WIDTH 30
-#define HEIGHT 17
+#define KBLAYOUT_NUM_CHARS 2
+#define WIDTH 30U
+#define HEIGHT 17U
 #define POS_X -1 /* -1 on the center */
 #define POS_Y -1 /* -1 on the center */
 
-static char *getprogname_of_argv(char *argv_zero_tzs);
+static char *program_short_name(char *__restrict s);
 
 int main(int argc __attribute__((unused)), char *argv[])
 {
@@ -45,7 +42,7 @@ int main(int argc __attribute__((unused)), char *argv[])
     if ((dpy = XOpenDisplay(NULL)) == NULL)
     {
         fprintf(stderr, "%s: Error open DISPLAY\n",
-                getprogname_of_argv(argv[0]));
+                program_short_name(argv[0]));
         return EXIT_FAILURE;
     }
 
@@ -60,7 +57,7 @@ int main(int argc __attribute__((unused)), char *argv[])
     xftfont = XftFontOpenName(dpy, scr, FONT);
 
     if (POS_X == -1)
-        pos_x = WIDTH / 2 - xftfont->max_advance_width * LANG_OUTPUT_LENGTH / 2;
+        pos_x = WIDTH / 2 - xftfont->max_advance_width * KBLAYOUT_NUM_CHARS / 2;
     else
         pos_x = POS_X;
 
@@ -108,7 +105,7 @@ int main(int argc __attribute__((unused)), char *argv[])
                 kb = XkbGetKeyboard(dpy, XkbAllComponentsMask, XkbUseCoreKbd);
                 name = XGetAtomName(dpy, kb->names->groups[state.group]);
 
-                i = LANG_OUTPUT_LENGTH;
+                i = KBLAYOUT_NUM_CHARS;
                 do
                 {
                     --i;
@@ -118,7 +115,7 @@ int main(int argc __attribute__((unused)), char *argv[])
                 xftdraw = XftDrawCreate(dpy, win, vsl, cmap);
                 XClearWindow(dpy, win);
                 XftDrawString8(xftdraw, &xftfgcolor, xftfont, pos_x, pos_y,
-                               (const FcChar8 *)name, LANG_OUTPUT_LENGTH);
+                               (const FcChar8 *)name, KBLAYOUT_NUM_CHARS);
                 XftDrawDestroy(xftdraw);
                 XRaiseWindow(dpy, win);
                 XFlush(dpy);
@@ -131,20 +128,23 @@ int main(int argc __attribute__((unused)), char *argv[])
         XNextEvent(dpy, &evnt);
     }
 
+    /* code will never be executed
     XDestroyWindow(dpy, win);
     XftColorFree(dpy, vsl, cmap, &xftfgcolor);
     XftColorFree(dpy, vsl, cmap, &xftbgcolor);
     XCloseDisplay(dpy);
+    return EXIT_SUCCESS;
+    */
 }
 
-/* get current process name without path */
-char *getprogname_of_argv(char *argv_zero_tzs)
+/* get program name without path */
+char *program_short_name(char *__restrict s)
 {
     char *p;
-    if (argv_zero_tzs == NULL)
+    if (s == NULL)
         return NULL;
-    for (p = argv_zero_tzs; *argv_zero_tzs; ++argv_zero_tzs)
-        if (*argv_zero_tzs == '/')
-            p = argv_zero_tzs + 1;
+    for (p = s; *s; ++s)
+        if (*s == '/')
+            p = s + 1U;
     return p;
 }
