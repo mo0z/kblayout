@@ -23,7 +23,7 @@ gcc -O3 -s -lX11 -lXft `pkg-config --cflags freetype2` -o kblayout kblayout.c
 #define POS_X -1 /* -1 on the center */
 #define POS_Y -1 /* -1 on the center */
 
-static char *program_short_name(char *s);
+static char *program_name(char *s);
 
 int main(int argc __attribute__((unused)), char *argv[])
 {
@@ -41,8 +41,7 @@ int main(int argc __attribute__((unused)), char *argv[])
 
     if ((dpy = XOpenDisplay(NULL)) == NULL)
     {
-        fprintf(stderr, "%s: Error open DISPLAY\n",
-                program_short_name(argv[0]));
+        fprintf(stderr, "%s: Error open DISPLAY\n", program_name(argv[0]));
         return EXIT_FAILURE;
     }
 
@@ -137,8 +136,8 @@ int main(int argc __attribute__((unused)), char *argv[])
     */
 }
 
-/* get program name without path */
-char *program_short_name(char *s)
+/* get short program name */
+char *program_name(char *s)
 {
     char *p;
     if (s == NULL)
